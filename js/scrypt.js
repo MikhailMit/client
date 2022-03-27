@@ -19,7 +19,7 @@ import { getSort } from "./sort.js"
     headerWrap.append(serchList);
     let clients = [{}];
     let clientsArr = [];
-    let listOfContacts = []
+    let listOfContacts = [];
     const preloaderAdd = spinerPreloder()
     tbody.append(preloaderAdd)
     const clientSafeSpiner = document.createElement('span');
@@ -238,7 +238,9 @@ import { getSort } from "./sort.js"
                 tbody.append(createClient(data));
                 modal.classList.remove('modal-active');
                 shadow.classList.remove('modal-active');
-            } catch (error) {} finally {
+            } catch (error) {
+                console.log(error);
+            } finally {
                 clientSafeSpiner.style.display = 'none'
             }
 
@@ -249,7 +251,8 @@ import { getSort } from "./sort.js"
     }
 
     function enrolClient(form) {
-        let contacts = form.elements.contact;
+        const contacts = form.elements.contact;
+        clients = null;
         let contactsArr = [];
         let editClientArr = [];
         let typeOfContacts
@@ -297,7 +300,7 @@ import { getSort } from "./sort.js"
         }]
         editClientArr = Object.assign({}, ...clients, );
 
-
+        console.log(editClientArr)
         return editClientArr
     }
 
@@ -313,9 +316,7 @@ import { getSort } from "./sort.js"
         } catch (error) {
             console.log(error)
         }
-
     }
-
     async function sendClientData(client, method, id = null) {
         try {
             const response = await fetch(`https://vast-tor-64234.herokuapp.com/api/clients/${method === 'POST'? '' : id}`, {
@@ -325,13 +326,8 @@ import { getSort } from "./sort.js"
                 method,
                 body: JSON.stringify(client)
             });
-
             const result = await response.json();
-
-
-            return result;
-
-
+            return result
         } catch (error) {
             console.log(error)
         }
@@ -409,7 +405,7 @@ import { getSort } from "./sort.js"
         clientEditSpiner.innerHTML = svgChangeSpiner;
         clientDeleteCrest.innerHTML = svgDeleteCrest;
         clientDeleteSpiner.innerHTML = svgDeleteSpiner;
-        // добовление данных форму изменить данные клиента
+        // добовление данных в форму изменить данные клиента
 
 
         data.contacts.forEach(contact => {
@@ -429,9 +425,6 @@ import { getSort } from "./sort.js"
                 clientDeleteSpiner.style.display = 'none';
                 clientDeleteCrest.style.display = 'block';
             }, 300);
-
-
-
         })
 
 
@@ -624,7 +617,6 @@ import { getSort } from "./sort.js"
     // Изменение данных клиента
     function editClientModal(data) {
         addClientModall()
-
         const hederModal = document.querySelector('.client-card__header');
         const declaneBtn = document.querySelector('.btn-delete');
         const createTitleId = document.createElement('span');
@@ -650,15 +642,13 @@ import { getSort } from "./sort.js"
         patronymic.value = data.lastName;
 
         data.contacts.forEach(contact => {
-                addContact(contact)
-            })
-            // нужно придумать как форму иминовать оригинально
+            addContact(contact)
+        })
+
         safeClient.addEventListener('submit', async(event) => {
             event.preventDefault();
             const form = safeClient;
             const editClientArr = enrolClient(form)
-
-
             try {
                 clientSafeSpiner.style.display = 'block'
                 const editData = await sendClientData(editClientArr, 'PATCH', data._id)
@@ -666,16 +656,11 @@ import { getSort } from "./sort.js"
                 modal.classList.remove('modal-active');
                 shadow.classList.remove('modal-active');
             } catch (error) {
-
+                console.log(error);
             } finally {
                 clientSafeSpiner.style.display = 'none'
-
             }
-
-
         })
-
-
     }
 
     function serchClients(targetClients) {
