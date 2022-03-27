@@ -3,17 +3,23 @@ import { spinerPreloder } from "./preloder.js";
 import { validateContact } from "./validateContact.js";
 import { validateForm } from "./validateForm.js";
 import { getSort } from "./sort.js"
+import { addModal } from "./modal.js"
+
 
 
 (() => {
-
+    const modal = addModal()
     const tbody = document.querySelector('tbody')
-    const btnAddContact = document.querySelector('.client-card__button--add-client');
-    const clientCardSelect = document.querySelector('.client-card__select');
-    const safeClient = document.querySelector('#addClient');
-    const btnSafe = document.querySelector('.btn-safe')
+    const btnAddContact = modal.clientCardButtonAddContact;
+    const clientCardSelect = modal.clientCardSelect;
+    const safeClient = modal.formAddClient
+    const btnSafe = modal.btnSafe
     const headerWrap = document.querySelector('.form-inline');
     const serchList = document.createElement('ul')
+    const clientSafeSpiner = document.createElement('span');
+    clientSafeSpiner.classList.add('table__spiner-edit');
+    clientSafeSpiner.innerHTML = svgChangeSpiner;
+    btnSafe.prepend(clientSafeSpiner);
 
     serchList.classList.add('navbar__find-list', 'd-none')
     headerWrap.append(serchList);
@@ -22,41 +28,38 @@ import { getSort } from "./sort.js"
     let listOfContacts = [];
     const preloaderAdd = spinerPreloder()
     tbody.append(preloaderAdd)
-    const clientSafeSpiner = document.createElement('span');
-    clientSafeSpiner.classList.add('table__spiner-edit');
-    clientSafeSpiner.innerHTML = svgChangeSpiner;
-    btnSafe.prepend(clientSafeSpiner);
+
 
     // создание формы
     // открытие модального окна добавить клиента
     const btn = document.getElementById('add-client')
     const body = document.querySelector('body')
-    const shadow = document.querySelector('.client-card__modal-shadow');
-    const modal = document.querySelector('.client-card__modal');
-    const btnClose = document.querySelector('.btn-close');
+
+
+
+
 
     btn.addEventListener('click', () => {
-        safeClient.id = 'addClient';
+        body.append(modal.clientCardModal, modal.shadow)
         addClientModall();
-        addNewClient();
+
     })
 
-    function addClientModall() {
-        modal.classList.add('modal-active');
-        shadow.classList.add('modal-active');
 
+    function addClientModall() {
+        body.append(modal.clientCardModal, modal.shadow)
         const newSelect = document.querySelectorAll('.client-card__select-wrap');
 
         newSelect.forEach(element => {
             element.remove();
         });
 
-        const hederModal = document.querySelector('.client-card__header');
-        const declaneBtn = document.querySelector('.btn-delete');
-        const surname = document.querySelector('#inputSurname');
-        const name = document.querySelector('#inputName');
-        const patronymic = document.querySelector('#inputPatronymic');
-        const safeBtnWarp = document.querySelector('.client-card__btn--wrap');
+        const hederModal = modal.clientCardHeader;
+        const declaneBtn = modal.btnCancel;
+        const surname = modal.InputSurname;
+        const name = modal.InputName;
+        const patronymic = modal.InputPatronymic;
+        const safeBtnWarp = modal.clientCardBtnWrap;
         hederModal.textContent = 'Новый клиент'
         declaneBtn.textContent = 'отмена'
         surname.value = '';
@@ -83,15 +86,12 @@ import { getSort } from "./sort.js"
         errorWrap.append(errorText)
         safeBtnWarp.before(errorWrap);
     }
-    btnClose.addEventListener('click', () => {
-        modal.classList.remove('modal-active');
-        shadow.classList.remove('modal-active');
-    });
+
     document.addEventListener('click', (e) => {
 
         if (e.target == modal || e.target == document.querySelector('.btn-delete')) {
-            modal.classList.remove('modal-active');
-            shadow.classList.remove('modal-active');
+            modal.clientCardModal.remove();
+            modal.shadow.remove();
         };
     })
 
@@ -218,7 +218,7 @@ import { getSort } from "./sort.js"
 
 
     // Получение данных из формы и отправка на сервер
-    async function addNewClient() {
+    if (modal.clientCardHeader.textContent === 'Новый клиент') {
         safeClient.addEventListener('submit', async(event) => {
             event.preventDefault();
 
@@ -228,7 +228,7 @@ import { getSort } from "./sort.js"
             const form = safeClient;
             const editClientArr = enrolClient(form);
 
-            if (enrolClient(form) === null) {
+            if (editClientArr === null) {
                 return
             }
 
@@ -236,19 +236,19 @@ import { getSort } from "./sort.js"
                 clientSafeSpiner.style.display = 'block'
                 const data = await sendClientData(editClientArr, 'POST');
                 tbody.append(createClient(data));
-                modal.classList.remove('modal-active');
-                shadow.classList.remove('modal-active');
+
             } catch (error) {
                 console.log(error);
             } finally {
                 clientSafeSpiner.style.display = 'none'
+                modal.clientCardModal.remove();
+                modal.shadow.remove();
             }
-
-
-
 
         })
     }
+
+
 
     function enrolClient(form) {
         const contacts = form.elements.contact;
@@ -300,7 +300,7 @@ import { getSort } from "./sort.js"
         }]
         editClientArr = Object.assign({}, ...clients, );
 
-        console.log(editClientArr)
+
         return editClientArr
     }
 
@@ -432,7 +432,7 @@ import { getSort } from "./sort.js"
             clientEditSpiner.style.display = 'block';
             clientEditPen.style.display = 'none';
             setTimeout(() => {
-                safeClient.id = 'edit-client'
+
                 editClientModal(data)
                 clientEditSpiner.style.display = 'none';
                 clientEditPen.style.display = 'block';
@@ -617,13 +617,13 @@ import { getSort } from "./sort.js"
     // Изменение данных клиента
     function editClientModal(data) {
         addClientModall()
-        const hederModal = document.querySelector('.client-card__header');
-        const declaneBtn = document.querySelector('.btn-delete');
+        const hederModal = modal.clientCardHeader;
+        const declaneBtn = modal.btnCancel;
+        const surname = modal.InputSurname;
+        const name = modal.InputName;
+        const patronymic = modal.InputPatronymic;
         const createTitleId = document.createElement('span');
-        const surname = document.querySelector('#inputSurname');
-        const name = document.querySelector('#inputName');
-        const patronymic = document.querySelector('#inputPatronymic');
-        const safeClient = document.querySelector('#edit-client')
+        const safeClient = modal.formAddClient;
         declaneBtn.addEventListener('click', () => {
             const deleteModal = deleteClientModal()
             document.body.append(deleteModal.deleteModal);
@@ -653,8 +653,8 @@ import { getSort } from "./sort.js"
                 clientSafeSpiner.style.display = 'block'
                 const editData = await sendClientData(editClientArr, 'PATCH', data._id)
                 tbody.replaceChild(createClient(editData), document.getElementById(editData._id));
-                modal.classList.remove('modal-active');
-                shadow.classList.remove('modal-active');
+                modal.clientCardModal.remove();
+                modal.shadow.remove();
             } catch (error) {
                 console.log(error);
             } finally {
@@ -706,6 +706,7 @@ import { getSort } from "./sort.js"
                         link.innerHTML = spotLight(string, link.innerHTML.search(value), value.length);
                     }
                 });
+
             } else {
                 foundClients.forEach(link => {
                     tbody.innerHTML = '';

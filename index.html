@@ -14,7 +14,7 @@
     <link rel="icon" href="favicon.ico" type="image/x-icon">
     <title>privateCRM</title>
 
-    <!-- <script defer src="js/modal.js"></script> -->
+
     <script defer src="js/choices.min.js"></script>
     <script defer type="module" src="js/scrypt.js"></script>
 </head>
@@ -62,50 +62,6 @@
             <tbody class="clients-list--tbody">
             </tbody>
         </table>
-
-        <div class="client-card__modal" id="Card-client">
-            <div class="client-card bg-white w-25 client-card__modal--window" role="dialog" aria-modal="true">
-                <div class="client-card__body">
-                    <div class="d-flex justify-content-between pt-4 px-4">
-                        <h3 class="client-card__header">Новый клиент</h3>
-                        <button class="btn-reset btn-close"><svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path fill-rule="evenodd" clip-rule="evenodd" d="M16.2333 1.73333L15.2666 0.766664L8.49991 7.53336L1.73324 0.766696L0.766576 1.73336L7.53324 8.50003L0.766603 15.2667L1.73327 16.2333L8.49991 9.46669L15.2666 16.2334L16.2332 15.2667L9.46657 8.50003L16.2333 1.73333Z" fill="#B0B0B0"/>
-                  </svg>
-                  </button>
-                    </div>
-                    <form action="#" name="addClient" id="addClient">
-                        <div class="px-4 pb-4">
-                            <label class="client-card__label" for="input-surname">Фамилия</label>
-                            <div>
-                                <input class="client-card__input w-100" name="surname" type="text" id="inputSurname">
-                            </div>
-                            <label class="client-card__label" for="input-patronymic">имя</label>
-                            <div>
-                                <input class="client-card__input w-100" type="text" name="name" id="inputName">
-                            </div>
-                            <label class="client-card__label" for="input-patronymic">отчество</label>
-                            <div>
-                                <input class="client-card__input w-100" type="text" name="patronymic" id="inputPatronymic">
-                            </div>
-                        </div>
-                        <div class="client-card__select d-flex flex-column py-5 px-2  p-md-5">
-
-                            <div class="d-flex justify-content-center order-3">
-                                <button class="client-card__button--add-client" type="button">
-                            <i class="bi bi-plus-circle"></i>Добавить контакт</button>
-                            </div>
-                        </div>
-                        <div class="d-flex client-card__btn--wrap justify-content-center pt-1 mb-1">
-                            <button class="btn d-flex btn-safe">Сохранить</button>
-                        </div>
-                    </form>
-                    <div class="d-flex justify-content-center pb-4">
-                        <button class="btn-delete">Отмена</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
     </div>
     <div class="d-flex justify-content-center">
         <button type="button" class="btn btn-outline-success" id="add-client"><svg width="23" height="16" viewBox="0 0 23 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -113,7 +69,7 @@
       </svg>
       Добавить клиента</button>
     </div>
-    <div class="client-card__modal-shadow"></div>
+
 
 </body>
 
