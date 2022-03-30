@@ -41,6 +41,10 @@ import { addModal } from "./modal.js"
 
     btn.addEventListener('click', () => {
         body.append(modal.clientCardModal, modal.shadow)
+        setTimeout(() => {
+            modal.clientCardModal.classList.add('modal-active')
+        }, 300);
+
         addClientModall();
 
     })
@@ -85,15 +89,30 @@ import { addModal } from "./modal.js"
         errorText.append(incorectSymbole, writeName, writeSurname, writePatronymic, requireValue, requireContacts);
         errorWrap.append(errorText)
         safeBtnWarp.before(errorWrap);
+        return {
+            errorWrap
+        }
     }
 
     document.addEventListener('click', (e) => {
 
         if (e.target == modal || e.target == document.querySelector('.btn-delete')) {
-            modal.clientCardModal.remove();
-            modal.shadow.remove();
+            modal.clientCardModal.classList.remove('modal-active')
+            setTimeout(() => {
+                modal.clientCardModal.remove();
+                modal.shadow.remove();
+            }, 300);;
         };
     })
+    modal.btnClose.addEventListener('click', () => {
+        modal.clientCardModal.classList.remove('modal-active')
+        setTimeout(() => {
+            modal.clientCardModal.remove();
+            modal.shadow.remove();
+        }, 300);;
+
+
+    });
 
     btnAddContact.addEventListener('click', addContact);
 
@@ -241,8 +260,11 @@ import { addModal } from "./modal.js"
                 console.log(error);
             } finally {
                 clientSafeSpiner.style.display = 'none'
-                modal.clientCardModal.remove();
-                modal.shadow.remove();
+                modal.clientCardModal.classList.remove('modal-active')
+                setTimeout(() => {
+                    modal.clientCardModal.remove();
+                    modal.shadow.remove();
+                }, 300);
             }
 
         })
@@ -311,7 +333,6 @@ import { addModal } from "./modal.js"
                 method: 'GET'
             });
             const result = await response.json();
-
             return result
         } catch (error) {
             console.log(error)
@@ -451,7 +472,7 @@ import { addModal } from "./modal.js"
         changedDate.textContent = formatData(data.updatedAt);
         changedTime.textContent = formatTime(data.updatedAt);
         clientEdit.prepend(clientEditPen, clientEditSpiner);
-        clientDelete.prepend(clientDeleteCrest, clientDeleteSpiner)
+        clientDelete.prepend(clientDeleteCrest, clientDeleteSpiner);
         clientFullName.append(clientName, clientSurname, clientLastName);
         clientCreated.append(createDate, createdTime);
         clientChanged.append(changedDate, changedTime);
@@ -617,6 +638,9 @@ import { addModal } from "./modal.js"
     // Изменение данных клиента
     function editClientModal(data) {
         addClientModall()
+        setTimeout(() => {
+            modal.clientCardModal.classList.add('modal-active')
+        }, 300);;
         const hederModal = modal.clientCardHeader;
         const declaneBtn = modal.btnCancel;
         const surname = modal.InputSurname;
@@ -653,8 +677,11 @@ import { addModal } from "./modal.js"
                 clientSafeSpiner.style.display = 'block'
                 const editData = await sendClientData(editClientArr, 'PATCH', data._id)
                 tbody.replaceChild(createClient(editData), document.getElementById(editData._id));
-                modal.clientCardModal.remove();
-                modal.shadow.remove();
+                modal.clientCardModal.classList.remove('modal-active')
+                setTimeout(() => {
+                    modal.clientCardModal.remove();
+                    modal.shadow.remove();
+                }, 300);
             } catch (error) {
                 console.log(error);
             } finally {
@@ -662,6 +689,7 @@ import { addModal } from "./modal.js"
             }
         })
     }
+
 
     function serchClients(targetClients) {
         const findList = document.querySelector('.navbar__find-list');
@@ -679,17 +707,46 @@ import { addModal } from "./modal.js"
             findItem.append(findLink);
             findList.append(findItem);
         });
+        document.addEventListener('click', async(e) => {
+            const foundClients = document.querySelectorAll('.navbar__find-list--a');
+
+            foundClients.forEach(link => addEventListener('click', async(e) => {
+
+                if (e.target === link) {
+                    input.value = e.target.textContent;
+                    const value = input.value;
+                    rewriteTabel(value)
+                }
+            }))
+
+            if (e.target != input) {
+                input.value = '';
+                findList.classList.add('d-none');
+                foundClients.forEach(link => {
+                    tbody.innerHTML = '';
+                    clients.forEach(client => tbody.append(createClient(client)));
+                    link.classList.remove('d-none');
+                    findList.classList.add('d-none');
+                    link.innerHTML = link.innerText;
+                })
+            }
+        });
 
         async function rewriteTabel(string) {
-            const response = await findClient(string);
+            const request = string.split(' ');
+            const response = await findClient(request);
             tbody.innerHTML = '';
 
             response.forEach(client => {
                 tbody.append(createClient(client));
             })
         }
-        input.addEventListener('input', async() => {
+        input.addEventListener('input', () => {
             const value = input.value.trim();
+
+            searchClientbyName(value)
+        });
+        async function searchClientbyName(value) {
             const foundClients = document.querySelectorAll('.navbar__find-list--a');
 
             if (value !== '') {
@@ -698,7 +755,6 @@ import { addModal } from "./modal.js"
                     if (link.innerText.search(value) == -1) {
                         link.classList.add('d-none');
                         link.innerHTML = link.innerText;
-
                     } else {
                         link.classList.remove('d-none');
                         findList.classList.remove('d-none');
@@ -706,20 +762,16 @@ import { addModal } from "./modal.js"
                         link.innerHTML = spotLight(string, link.innerHTML.search(value), value.length);
                     }
                 });
-
             } else {
                 foundClients.forEach(link => {
                     tbody.innerHTML = '';
-
                     clients.forEach(client => tbody.append(createClient(client)));
-
                     link.classList.remove('d-none');
                     findList.classList.add('d-none');
-
                     link.innerHTML = link.innerText;
                 })
             }
-        });
+        }
     }
 
     const spotLight = (string, position, length) => string

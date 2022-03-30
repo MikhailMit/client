@@ -96,14 +96,12 @@ export function addModal() {
     clientCardModalWindow.append(clientCardBody);
     clientCardModal.append(clientCardModalWindow);
 
-    btnClose.addEventListener('click', () => {
-        clientCardModal.remove();
-        shadow.remove();
-    });
+
 
 
     return {
         btnSafe,
+        btnClose,
         clientCardHeader,
         btnCancel,
         InputSurname,
